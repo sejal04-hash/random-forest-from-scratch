@@ -43,8 +43,41 @@ def split_score(parent_labels, left_labels, right_labels):
     sr = impurity(parent_labels) -(l_w*impurity(left_labels) + r_w*impurity(right_labels))
     return sr
 
-# Step 4 - best_split (not yet solved)
-# TODO: implement
+# Step 4 - best_split
+import numpy as np
+
+def best_split(features, labels, feature_indices):
+    # TODO: search feature_indices for the (feature, threshold) that best improves purity.
+    best_feature =  None
+    best_threshold = None 
+    best_score = 0.0 
+
+    for feature_index  in feature_indices :
+        values = np.unique(features[:,feature_index])
+        
+        thresholds = (values[:-1]+ values[1:])/2
+        
+        for threshold in thresholds :
+
+            left_features , left_labels , right_features , right_labels = split_dataset(features , labels , feature_index , threshold)
+
+            if len(left_labels )==0 or len(right_labels) ==0 :
+                continue 
+
+            score =split_score(
+                labels, left_labels, right_labels
+            )
+
+            if score > best_score:
+                best_score = score
+                best_feature = feature_index
+                best_threshold = threshold
+
+    return {
+        'feature_index': best_feature,
+        'threshold': best_threshold,
+        'score': float(best_score)
+    }
 
 # Step 5 - should_stop (not yet solved)
 # TODO: implement
