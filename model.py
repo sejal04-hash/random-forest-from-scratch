@@ -167,11 +167,39 @@ def build_tree(features, labels, max_depth=10,
         'right': right_node
     }
 
-# Step 8 - predict_example_tree (not yet solved)
-# TODO: implement
+# Step 8 - predict_example_tree
+def predict_example_tree(tree, example):
+    # TODO: walk the example down the fitted tree until you reach a leaf, then return its prediction.
+    while not tree['leaf']:
 
-# Step 9 - predict_tree (not yet solved)
-# TODO: implement
+        feature_index = tree['feature_index']
+        threshold = tree['threshold']
+
+        # step 3 decide left or right branch 
+
+        if example[feature_index]<= threshold:
+            tree= tree['left']
+        else :
+            tree = tree['right']
+
+    return int(tree['prediction'])
+
+# Step 9 - predict_tree
+def predict_tree(tree, features):
+    """Predict class labels for every row of `features` using a fitted decision tree.
+
+    tree: dict returned by build_tree
+    features: np.ndarray of shape (n, d)
+    returns: np.ndarray of shape (n,) with integer class labels
+    """
+    # TODO: return predicted class for each row of features using the fitted tree.
+    predictions = []
+
+    for example in features :
+        prediction = predict_example_tree(tree , example)
+        predictions.append(prediction)
+
+    return np.array(predictions , dtype = int )
 
 # Step 10 - bootstrap_sample (not yet solved)
 # TODO: implement
