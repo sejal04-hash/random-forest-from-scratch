@@ -103,8 +103,69 @@ def leaf_prediction(labels):
 
     return int(majority_class)
 
-# Step 7 - build_tree (not yet solved)
-# TODO: implement
+# Step 7 - build_tree
+import numpy as np
+
+def build_tree(features, labels, max_depth=10,
+               min_samples_split=2, feature_subset=None, depth=0):
+
+    # Step 1: Check stopping conditions
+    if should_stop(labels, depth, max_depth, min_samples_split):
+        return {
+            'leaf': True,
+            'prediction': leaf_prediction(labels)
+        }
+
+    # Step 2: Select allowed features
+    if feature_subset is None:
+        feature_indices = range(features.shape[1])
+    else:
+        feature_indices = feature_subset
+
+    # Step 3: Find best split
+    best = best_split(features, labels, feature_indices)
+
+    # Step 4: Check if a valid split exists
+    if best['feature_index'] is None or best['score'] <= 0:
+        return {
+            'leaf': True,
+            'prediction': leaf_prediction(labels)
+        }
+
+    feature_index = best['feature_index']
+    threshold = best['threshold']
+
+    # Step 5: Split dataset
+    left_features, left_labels, right_features, right_labels = \
+        split_dataset(features, labels, feature_index, threshold)
+
+    # Step 6: Recursively build child nodes
+    left_node = build_tree(
+        left_features,
+        left_labels,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        feature_subset=feature_subset,
+        depth=depth + 1
+    )
+
+    right_node = build_tree(
+        right_features,
+        right_labels,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        feature_subset=feature_subset,
+        depth=depth + 1
+    )
+
+    # Step 7: Return internal node
+    return {
+        'leaf': False,
+        'feature_index': int(feature_index),
+        'threshold': float(threshold),
+        'left': left_node,
+        'right': right_node
+    }
 
 # Step 8 - predict_example_tree (not yet solved)
 # TODO: implement
